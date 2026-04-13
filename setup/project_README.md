@@ -43,4 +43,4 @@
 ./mvnw clean install -DskipTests
 
 ### Clean run
-2. ./mvnw clean spring-boot:run
+./mvnw clean spring-boot:run

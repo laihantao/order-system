@@ -2,7 +2,6 @@ package com.order_system.order.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +15,6 @@ import com.order_system.order.dto.CreateOrderRequestDTO;
 import com.order_system.order.dto.OrderResponseDTO;
 import com.order_system.order.service.OrderServices;
 
-
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -27,6 +25,16 @@ public class OrderController {
     @PostMapping("/create")
     public OrderResponseDTO createOrder(@RequestBody CreateOrderRequestDTO request) {
         return orderServices.createOrder(request);
+    }
+
+    @PostMapping("/createWithRedis")
+    public OrderResponseDTO createOrderRedis(@RequestBody CreateOrderRequestDTO request) {
+        return orderServices.createOrderRedis(request);
+    }
+
+    @PostMapping("/createWithKafkaRedis")
+    public OrderResponseDTO createOrderKafkaRedis(@RequestBody CreateOrderRequestDTO request) {
+        return orderServices.createOrderKafkaRedis(request);
     }
 
     @GetMapping("/getOrderById/{orderId}")

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.order_system.logging.mapper.LoggingMapper">
+
+    <insert id="insertLogging" parameterType="java.util.Map">
+        INSERT INTO logging (order_id, user_id, message, remark)
+        VALUES (#{order_id}, #{user_id}, #{message}, #{remark})
+    </insert>
+
+
+</mapper>

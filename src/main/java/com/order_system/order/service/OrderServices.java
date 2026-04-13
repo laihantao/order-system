@@ -8,6 +8,10 @@ import com.order_system.order.dto.OrderResponseDTO;
 
 public interface OrderServices {
     OrderResponseDTO createOrder(CreateOrderRequestDTO request);
+    OrderResponseDTO createOrderRedis(CreateOrderRequestDTO request);
+    OrderResponseDTO createOrderKafkaRedis(CreateOrderRequestDTO request);
     Map<String, Object> getOrderById(String orderId);
     List <OrderResponseDTO> getAllOrders();
+
+    
 }

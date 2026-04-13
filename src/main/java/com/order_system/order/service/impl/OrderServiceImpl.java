@@ -16,8 +16,7 @@ import com.order_system.order.dto.OrderResponseDTO;
 import com.order_system.order.mapper.OrderMapper;
 import com.order_system.order.model.Order;
 import com.order_system.order.service.OrderServices;
-
-
+import com.order_system.logging.mapper.LoggingMapper;
 
 @Service
 public class OrderServiceImpl implements OrderServices {
@@ -27,14 +26,95 @@ public class OrderServiceImpl implements OrderServices {
     @Autowired
     private OrderMapper orderMapper;
 
+    @Autowired
+    private LoggingMapper loggingMapper;
+
     @Override
     public OrderResponseDTO createOrder(CreateOrderRequestDTO request) {
 
-        LOGGER.debug("Creating order for user: {}", request.userId);
+        String order_id = "ORD" + "_" + System.currentTimeMillis(); // simplified order ID generation
+
+        try {
+            LOGGER.debug("Creating order for user: {}", request.userId);
+
+            // 1. create order (CREATED)
+            Order order = new Order();
+            order.setOrderId(order_id);
+            order.setUserId(request.userId);
+            order.setStatus("CREATED");
+
+            // 2. calculate total price (simplified)
+            double total = 0;
+
+            for (CreateOrderRequestDTO.OrderItemRequest item : request.items) {
+                total += item.quantity * 10; // assume food price = 10 (demo)
+            }
+
+            order.setTotalPrice(total);
+
+            orderMapper.insertOrder(order);
+
+            OrderResponseDTO response = new OrderResponseDTO();
+            response.orderId = order.getOrderId();
+            response.status = "CREATED";
+            response.totalPrice = total;
+
+            return response;
+        }
+        catch (Exception e) {
+            LOGGER.error("Error creating order: {}", e.getMessage());
+
+            Map<String, Object> logging = new HashMap<>();
+            logging.put("order_id", order_id);
+            logging.put("user_id", request.userId);
+            logging.put("message", "Failed to create order: " + e.getMessage());
+            logging.put("remark", "Error occurred while creating order");
+
+            loggingMapper.insertLogging(logging);
+
+            throw new RuntimeException("Failed to create order: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public OrderResponseDTO createOrderRedis(CreateOrderRequestDTO request) {
+
+        LOGGER.debug("Creating order with Redis for user: {}", request.userId);
 
         // 1. create order (CREATED)
         Order order = new Order();
-        String order_id = "ORDER" + System.currentTimeMillis(); // simplified order ID generation
+        String order_id = "ORD" + "_" + System.currentTimeMillis(); // simplified order ID generation
+        order.setOrderId(order_id);
+        order.setUserId(request.userId);
+        order.setStatus("CREATED");
+
+        // 2. calculate total price (simplified)
+        double total = 0;
+
+        for (CreateOrderRequestDTO.OrderItemRequest item : request.items) {
+            total += item.quantity * 10; // assume food price = 10 (demo)
+        }
+
+        order.setTotalPrice(total);
+
+        orderMapper.insertOrder(order);
+
+        OrderResponseDTO response = new OrderResponseDTO();
+        response.orderId = order.getOrderId();
+        response.status = "CREATED";
+        response.totalPrice = total;
+
+        return response;
+    }
+
+    @Override
+    public OrderResponseDTO createOrderKafkaRedis(CreateOrderRequestDTO request) {
+
+        LOGGER.debug("Creating order with Kafka and Redis for user: {}", request.userId);
+
+        // 1. create order (CREATED)
+        Order order = new Order();
+        String order_id = "ORD" + "_" + System.currentTimeMillis(); // simplified order ID generation
         order.setOrderId(order_id);
         order.setUserId(request.userId);
         order.setStatus("CREATED");

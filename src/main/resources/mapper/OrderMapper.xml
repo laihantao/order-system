@@ -10,8 +10,12 @@
         VALUES (#{orderId}, #{userId}, #{status}, #{totalPrice})
     </insert>
 
-    <select id="selectOrderById" resultType="com.order_system.order.model.Order">
+    <select id="selectOrderById" resultType="java.util.Map">
         SELECT * FROM orders WHERE order_id = #{orderId}
+    </select>
+
+    <select id="selectAllOrders" resultType="com.order_system.order.model.Order">
+        SELECT * FROM orders
     </select>
 
 </mapper>

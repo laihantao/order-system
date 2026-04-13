@@ -1,5 +1,7 @@
 package com.order_system.order.controller;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +29,14 @@ public class OrderController {
         return orderServices.createOrder(request);
     }
 
-    @GetMapping("/{orderId}")
-    public OrderResponseDTO getOrder(@PathVariable UUID orderId) {
-        return orderServices.getOrder(orderId);
+    @GetMapping("/getOrderById/{orderId}")
+    public Map<String, Object> getOrderById(@PathVariable String orderId) {
+        return orderServices.getOrderById(orderId);
+    }
+
+    @GetMapping("/getAllOrders")
+    public List<OrderResponseDTO> getAllOrders() {
+        return orderServices.getAllOrders();
     }
 
     @GetMapping("/test")

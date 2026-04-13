@@ -1,7 +1,6 @@
 package com.order_system.order.model;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class Order {
 

@@ -1,6 +1,10 @@
 package com.order_system.order.service.impl;
 
-import java.util.UUID;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +34,8 @@ public class OrderServiceImpl implements OrderServices {
 
         // 1. create order (CREATED)
         Order order = new Order();
-        order.setOrderId("TESTINGORDERID");
+        String order_id = "ORDER" + System.currentTimeMillis(); // simplified order ID generation
+        order.setOrderId(order_id);
         order.setUserId(request.userId);
         order.setStatus("CREATED");
 
@@ -46,7 +51,7 @@ public class OrderServiceImpl implements OrderServices {
         orderMapper.insertOrder(order);
 
         OrderResponseDTO response = new OrderResponseDTO();
-        response.orderId = "TESTINGORDERID";
+        response.orderId = order.getOrderId();
         response.status = "CREATED";
         response.totalPrice = total;
 
@@ -54,19 +59,54 @@ public class OrderServiceImpl implements OrderServices {
     }
 
     @Override
-    public OrderResponseDTO getOrder(UUID orderId) {
+    public Map<String, Object> getOrderById(String orderId) {
 
-        Order order = orderMapper.selectOrderById(orderId);
+        System.out.println("Fetching order by ID: " + orderId);
 
-        if (order == null) {
-            throw new RuntimeException("Order not found: " + orderId);
+        Map<String, Object> response = new HashMap<String, Object>();
+
+        Map<String, Object> order = orderMapper.selectOrderById(orderId);
+
+        if (order == null || order.get("order_id") == null) {
+            response.put("error", "Order not found");
+            return response;
         }
 
-        OrderResponseDTO response = new OrderResponseDTO();
-        // response.setOrderId(order.getOrderId());
-        // response.setStatus(order.getStatus());
-        // response.setTotalPrice(order.getTotalPrice());
+        System.out.println(order.get("orderId"));
+        System.out.println(order.get("status"));
+
+        // OrderResponseDTO response = new OrderResponseDTO();
+        response.put("orderId", order.get("order_id"));
+        response.put("status", order.get("status"));
+        response.put("totalPrice", order.get("total_price"));
 
         return response;
+    }
+
+    @Override
+    public List<OrderResponseDTO> getAllOrders() {
+
+        List<Order> order = orderMapper.selectAllOrders();
+
+        LOGGER.debug("Fetching all orders: {}", order.size());
+
+        System.out.println("Fetched orders: " + order.size());
+
+        if (order == null || order.isEmpty()) {
+            throw new RuntimeException("No orders found");
+        }
+
+        List<OrderResponseDTO> responseList = new ArrayList<>();
+
+        for (Order o : order) {
+            System.out.println("Processing order: " + o.getOrderId());
+            OrderResponseDTO response = new OrderResponseDTO();
+            response.setOrderId(o.getOrderId());
+            response.setStatus(o.getStatus());
+            response.setTotalPrice(o.getTotalPrice());
+            responseList.add(response);
+        }
+
+        return responseList;
     }
 }

@@ -12,4 +12,6 @@ public class CreateOrderRequestDTO {
         public int foodId;
         public int quantity;
     }
+
+    public String idempotencyKey; // for idempotency control
 }

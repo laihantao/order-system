@@ -41,6 +41,8 @@
 3. Maven for Java
 
 
+
+
 ## Some commands:
 
 ### Clean install 
@@ -48,10 +50,3 @@
 
 ### Clean run
 ./mvnw clean spring-boot:run
-
-
-#### Note:
-1. Spring Boot auto-fill in, very convenience
-2. JMeter for stress test - https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip
-
-

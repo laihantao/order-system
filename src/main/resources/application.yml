@@ -1,0 +1,9 @@
+spring:
+    data:
+        redis:
+            sentinel:
+                master: redis
+                nodes:
+                    - 127.0.0.1:26379
+                    - 127.0.0.1:26380
+                password: ""

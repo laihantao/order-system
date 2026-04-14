@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,18 +25,20 @@ public class OrderController {
     private OrderServices orderServices;
 
     @PostMapping("/create")
-    public OrderResponseDTO createOrder(@RequestBody CreateOrderRequestDTO request) {
-        return orderServices.createOrder(request);
+    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody CreateOrderRequestDTO request) {
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderServices.createOrder(request));
+        
     }
 
     @PostMapping("/createWithRedis")
-    public OrderResponseDTO createOrderRedis(@RequestBody CreateOrderRequestDTO request) {
-        return orderServices.createOrderRedis(request);
+    public ResponseEntity<Map<String, Object>> createOrderRedis(@RequestBody CreateOrderRequestDTO request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderServices.createOrderRedis(request));
     }
 
     @PostMapping("/createWithKafkaRedis")
-    public OrderResponseDTO createOrderKafkaRedis(@RequestBody CreateOrderRequestDTO request) {
-        return orderServices.createOrderKafkaRedis(request);
+    public ResponseEntity<OrderResponseDTO> createOrderKafkaRedis(@RequestBody CreateOrderRequestDTO request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderServices.createOrderKafkaRedis(request));
     }
 
     @GetMapping("/getOrderById/{orderId}")

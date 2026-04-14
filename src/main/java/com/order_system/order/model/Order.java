@@ -19,6 +19,8 @@ public class Order {
     private LocalDateTime completedAt;
 
     private LocalDateTime cancelledAt;
+    
+    private String idempotencyKey;
 
     // ===== Getters & Setters =====
 
@@ -84,5 +86,13 @@ public class Order {
 
     public void setCancelledAt(LocalDateTime cancelledAt) {
         this.cancelledAt = cancelledAt;
+    }
+
+    public String getIdempotencyKey() {
+        return idempotencyKey;
+    }
+
+    public void setIdempotencyKey(String idempotencyKey) {
+        this.idempotencyKey = idempotencyKey;
     }
 }

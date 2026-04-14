@@ -1,3 +1,5 @@
+# Not longer in use due to already dockerized
+
 # Setup
 
 ## 1. Create SpringBoot project
@@ -40,9 +42,6 @@
 2. Spring Boot Extension Pack
 3. Maven for Java
 
-
-
-
 ## Some commands:
 
 ### Clean install 
@@ -53,3 +52,4 @@
 
 ### Clean package without test
 ./mvnw clean package -DskipTests
+

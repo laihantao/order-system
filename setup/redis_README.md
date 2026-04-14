@@ -1,3 +1,5 @@
+# Not longer in use due to already dockerized
+
 # Redis
 The introduciton of Redis to this project is to implement locking with key. This prevents "Race Conditions" and stops your database from being overwhelmed by duplicate requests.
 
@@ -128,7 +130,12 @@ repl_backlog_size:1048576
 repl_backlog_first_byte_offset:15
 repl_backlog_histlen:196
 ```
-    
+
+## Redis Sentinel
+
+Known issue:
+> Stale data in sentinel causing Java program listening to wrong IP
+> Temp Solution: docker-compose down -v  AND docker-compose up -d, this will delete all cache data 
 
 ## Redis Command
 

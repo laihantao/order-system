@@ -18,14 +18,14 @@ CREATE TABLE orders (
     CONSTRAINT fk_user
         FOREIGN KEY (user_id)
         REFERENCES users(id),
-
     status VARCHAR(20) NOT NULL,
     total_price NUMERIC(10,2) DEFAULT 0,
-
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     processing_at TIMESTAMP null,
     completed_at TIMESTAMP null,
-    cancelled_at TIMESTAMP NULL
+    cancelled_at TIMESTAMP null,
+    idempotency_key VARCHAR(40) not null,
+    UNIQUE(user_id, idempotency_key)
 );
 ```
 

@@ -9,7 +9,7 @@ import com.order_system.order.model.Order;
 
 @Mapper
 public interface OrderMapper {
-    void insertOrder(Order order);
+    Order insertOrder(Order order);
     Map<String, Object> selectOrderById(String orderId);
     List<Order> selectAllOrders();
 }

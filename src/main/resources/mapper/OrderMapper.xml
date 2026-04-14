@@ -5,10 +5,26 @@
 
 <mapper namespace="com.order_system.order.mapper.OrderMapper">
 
-    <insert id="insertOrder" parameterType="com.order_system.order.model.Order">
-        INSERT INTO orders (order_id, user_id, status, total_price, idempotency_key)
-        VALUES (#{orderId}, #{userId}, #{status}, #{totalPrice}, #{idempotencyKey})
-    </insert>
+    <select id="insertOrder" parameterType="com.order_system.order.model.Order">
+        INSERT INTO orders (
+            order_id,
+            user_id,
+            status,
+            total_price,
+            idempotency_key
+        )
+        VALUES (
+            #{orderId},
+            #{userId},
+            #{status},
+            #{totalPrice},
+            #{idempotencyKey}
+        )
+        ON CONFLICT (user_id, idempotency_key)
+        DO UPDATE SET
+            user_id = orders.user_id
+        RETURNING *
+    </select>
 
     <select id="selectOrderById" resultType="java.util.Map">
         SELECT * FROM orders WHERE order_id = #{orderId}

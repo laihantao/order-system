@@ -193,8 +193,11 @@ SCAN 0 MATCH USER:* COUNT 100
 DBSIZE
 ```
 
+### Check docker existing IP
+>docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)
 
-
+### Check sentinel on who is master now
+>docker exec -it sentinel-1 redis-cli -p 26379 sentinel get-master-addr-by-name mymaster
 
 ## Common issue
 

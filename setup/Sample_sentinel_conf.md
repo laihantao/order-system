@@ -1,3 +1,4 @@
+```
 port 26379
 
 # monitor <master-name> <ip> <port> <quorum>
@@ -10,3 +11,4 @@ sentinel failover-timeout mymaster 10000
 sentinel parallel-syncs mymaster 1
 sentinel resolve-hostnames yes
 sentinel announce-hostnames yes
+```

@@ -13,12 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
+import com.order_system.config.RedisConfig;
 import com.order_system.food.service.FoodServices;
 import com.order_system.order.dto.CreateOrderRequestDTO;
 import com.order_system.order.dto.OrderResponseDTO;
@@ -42,10 +43,10 @@ public class OrderServiceImpl implements OrderServices {
     private FoodServices foodServices;
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public OrderResponseDTO createOrder(CreateOrderRequestDTO request) {
@@ -115,50 +116,37 @@ public class OrderServiceImpl implements OrderServices {
 
         String order_id = "ORD" + "_" + String.valueOf(UUID.randomUUID()); // simplified order ID generation
 
-        String key = "IDEMPOTENCY:LOCK:USERID:" + request.userId + ":" + request.idempotencyKey;        
         String resultKey = "IDEMPOTENCY:RESULT:USERID:" + request.userId + ":" + request.idempotencyKey; 
 
-        Boolean success = redisTemplate.opsForValue().setIfAbsent(key, "PROCESSING", Duration.ofMinutes(5));
+        Object cacheData = redisTemplate.opsForValue().get(resultKey);
+
+        if (cacheData != null){
+            return Map.of(
+                "status", 200,
+                "data", cacheData,
+                "message", "Order already created"
+            );
+        }
+
+        String key = "IDEMPOTENCY:LOCK:USERID:" + request.userId + ":" + request.idempotencyKey;        
+        Boolean lockKeyResult = stringRedisTemplate.opsForValue().setIfAbsent(key, "PROCESSING", Duration.ofMinutes(5));
         
-        // To test Redis lock expiration, we set it to 5 seconds here. In production, it should be around 5 minutes or more depending on the expected processing time.
-        // Boolean success = redisTemplate.opsForValue().setIfAbsent(key, "PROCESSING", Duration.ofSeconds(5));
+        if (Boolean.FALSE.equals(lockKeyResult)) {
 
-        // try {
-        //     sleep(10000); // simulate processing time
-        // } catch (InterruptedException ex) {
-        //     System.getLogger(OrderServiceImpl.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
-        // }
+            Object cacheDataAgain = redisTemplate.opsForValue().get(resultKey);
 
-        if (Boolean.FALSE.equals(success)) {
-
-            String existingValue = redisTemplate.opsForValue().get(key);
-
-            if ("PROCESSING".equals(existingValue)) {
+            if (cacheDataAgain != null) {
                 return Map.of(
-                    "status", 409,
-                    "message", "Request is being processed"
-                );
+                "status", 200,
+                "data", cacheDataAgain,
+                "message", "Order already created"
+            );
             }
 
-            try {
-                String cachedValue = redisTemplate.opsForValue().get(resultKey);
-
-                OrderResponseDTO cachedResponse =
-                    objectMapper.readValue(cachedValue, OrderResponseDTO.class);
-
-                return Map.of(
-                    "status", 200,
-                    "data", cachedResponse,
-                    "message", "Order already created"
-                );
-
-            } catch (Exception e) {
-                return Map.of(
-                    "status", 500,
-                    "data", existingValue,
-                    "message", "Failed to parse cached response" + e.getMessage()
-                );
-            }
+            return Map.of(
+                "status", 409,
+                "message", "Request is being processed"
+            );
         }
 
         try {
@@ -193,24 +181,13 @@ public class OrderServiceImpl implements OrderServices {
 
             order.setTotalPrice(total);
 
-            orderMapper.insertOrder(order);
+            Order result = orderMapper.insertOrder(order);
 
-            OrderResponseDTO response = new OrderResponseDTO();
-            response.orderId = order.getOrderId();
-            response.status = "CREATED";
-            response.totalPrice = total;
-
-            // 1. Convert response to JSON string (using Jackson/Gson)
-            String jsonResponse = objectMapper.writeValueAsString(response);
-
-            // 2. Update Redis key from "1" to the actual result
-            // We increase TTL to 24 hours so they get the same result all day
-            redisTemplate.opsForValue().set(key, "COMPLETED", Duration.ofMinutes(5));
-            redisTemplate.opsForValue().set(resultKey, jsonResponse, Duration.ofHours(3));
+            redisTemplate.opsForValue().set(resultKey, result, Duration.ofHours(24));
 
             return Map.of(
                 "status", 200,
-                "data", response,
+                "data", result,
                 "message", "Order created successfully for user: " + request.userId
             );
         }

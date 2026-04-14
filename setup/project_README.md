@@ -50,3 +50,6 @@
 
 ### Clean run
 ./mvnw clean spring-boot:run
+
+### Clean package without test
+./mvnw clean package -DskipTests

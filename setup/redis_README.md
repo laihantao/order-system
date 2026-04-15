@@ -214,3 +214,12 @@ Request processing failed: org.springframework.data.redis.RedisConnectionFailure
 ```
 
 > Solution: Probably your java program is not being dockerized yet, and your redis instance didn't setup port, so those program outside docker cannot see the instance.
+
+
+2. Redis Sentinel
+
+volumes: 
+
+`- ./redis-sentinel/sentinel.conf:/etc/redis/sentinel.conf ## Mount from host to container`
+
+>If left side is file, then when mount to container, it should also be file.

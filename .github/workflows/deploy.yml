@@ -60,7 +60,6 @@ jobs:
           MSG=$(cat <<EOF
           🚀 Deployment to *${REPO}*
 
-          With *Docker* 🐳
           Revision: $SHORT_HASH
           Status: $STATUS_TEXT
           Branch: $BRANCH

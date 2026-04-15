@@ -83,7 +83,7 @@ services:
       - redis-replica-2
     command: ["redis-sentinel", "/etc/redis/sentinel.conf"] ## Run Redis Sentinel with the provided configuration file when the container starts
     volumes:
-      - ./redis-sentinel/sentinel.conf:/etc/redis/sentinel.conf ## Mount from host to container
+      - ./redis-sentinel/s1/sentinel.conf:/etc/redis/sentinel.conf ## Mount from host to container
 
   sentinel-2:
     image: redis:7
@@ -96,7 +96,7 @@ services:
       - redis-master
     command: ["redis-sentinel", "/etc/redis/sentinel.conf"]
     volumes:
-      - ./redis-sentinel/sentinel.conf:/etc/redis/sentinel.conf
+      - ./redis-sentinel/s2/sentinel.conf:/etc/redis/sentinel.conf
   sentinel-3:
     image: redis:7
     container_name: sentinel-3
@@ -108,4 +108,4 @@ services:
       - redis-master
     command: ["redis-sentinel", "/etc/redis/sentinel.conf"]
     volumes:
-      - ./redis-sentinel/sentinel.conf:/etc/redis/sentinel.conf
+      - ./redis-sentinel/s3/sentinel.conf:/etc/redis/sentinel.conf

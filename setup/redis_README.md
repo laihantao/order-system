@@ -220,6 +220,23 @@ Request processing failed: org.springframework.data.redis.RedisConnectionFailure
 
 volumes: 
 
-`- ./redis-sentinel/sentinel.conf:/etc/redis/sentinel.conf ## Mount from host to container`
+`- ./redis-sentinel/:/etc/redis/ ## Mount from host to container`
 
->If left side is file, then when mount to container, it should also be file.
+>Point folder instead of file.
+
+
+
+# Docker
+docker exec sentinel-1 redis-cli -p 26379 SENTINEL get-master-addr-by-name mymaster
+
+docker stop redis-master
+
+docker start redis-master
+
+docker-compose down sentinel-1 sentinel-2 sentinel-3 redis-master redis-replica-1 redis-replica-2
+
+docker-compose up -d redis-master redis-replica-1 redis-replica-2 sentinel-1 sentinel-2 sentinel-3
+
+
+
+sudo chmod -R 777 /var/www/HTLAI/order-system

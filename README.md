@@ -109,3 +109,19 @@ Sample payload
   "idempotencyKey": "TEST_KEY_1"
 }
 ```
+
+### Deploy in EC2
+
+#### 1. Repo environment variable
+
+- EC_HOST
+- EC2_USER
+- EC2_SSH_KEY
+- EC2_PROJECT_PATH
+
+If you want to integrate with telegram bot as well:
+- TELEGRAM_BOT_TOKEN
+- TELEGRRAM_CHAT_ID
+
+#### 2. 
+

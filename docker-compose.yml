@@ -1,6 +1,6 @@
 networks:
   redis-net:
-    driver: bridge # Testing 
+    driver: bridge # Testing 2
 
 services:
   app:

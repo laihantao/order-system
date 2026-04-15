@@ -36,7 +36,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /var/www/HTLAI/order-system
-            git pull origin main
             docker-compose pull
             docker-compose up -d --remove-orphans
 

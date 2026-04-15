@@ -28,6 +28,15 @@ jobs:
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/order-system:latest
 
+      - name: Copy config files via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "docker-compose.yml,redis-sentinel/" # Sync compose and the whole sentinel folder
+          target: "/var/www/HTLAI/order-system"
+
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:

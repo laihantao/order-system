@@ -81,19 +81,17 @@ The environment is orchestrated via docker-compose.yml:
 ### Local
 1. Clone the Repo
 
-2. Clean and build target file
-.\mvnw clean package -DskipTests
-
-3. Docker compose
+2. Docker compose
 > docker-compose up --build
 
-4. Create necessary table in your postgres, refer to ./setip/sql_README.md
+3. Create necessary table in your postgres, refer to ./setup/sql_README.md
+> This part can be automated in Docker Compose, by simply mount this file to /docker-entrypoint-initdb.d/ under postgres service.
 
-5. Proceed API call for testing
+4. Proceed API call for testing
 > http://localhost:8080/orders/createWithRedis
 
 Sample payload
-```sql
+```json
 {
   "userId": 1,
   "items": [
@@ -110,18 +108,121 @@ Sample payload
 }
 ```
 
-### Deploy in EC2
+### Deploy in EC2 with CI/CD (Github action)
+---
+#### Setup Github 
 
-#### 1. Repo environment variable
+1. Add github secret in Github Repository environment variable
+    - EC2_HOST
+    - EC2_USER
+    - EC2_SSH_KEY (Refer to step Setup AWS EC2 Server - Step 7)
+    - EC2_PROJECT_PATH
 
-- EC_HOST
-- EC2_USER
-- EC2_SSH_KEY
-- EC2_PROJECT_PATH
+2. If you want to integrate with telegram bot as well: (If not, remove the telegram part from docker-compose.yml to prevent github workflow error.)
+    - TELEGRAM_BOT_TOKEN
+    - TELEGRRAM_CHAT_ID
 
-If you want to integrate with telegram bot as well:
-- TELEGRAM_BOT_TOKEN
-- TELEGRRAM_CHAT_ID
+---
+#### Setup AWS EC2 Server 
 
-#### 2. 
+1. Create EC2 Server
+2. Setup the security and allow the port
 
+    - Postgres: 5432
+    - Java: 8080
+    - HTTP: 80
+    - HTTPS: 443
+    - SSH: 22
+
+    > Only open port 80/443 to the world. Ports 5432 and 6379 should only be accessible internally or from your specific IP.
+
+4. Access to the EC2 server with AWS Console (Or with Winscp, then you need setup the key pair to access)
+5. Create ssh key for CI/CD usage.
+    ```
+    ssh-keygen -t ed25519 -C "github-deploy"
+    ```
+    ```
+    chmod 600 ~/.ssh/authorized_keys
+    ```
+
+6. Go to /home/ec2-user/.ssh and copy your private key.
+7. Paste in github secret `EC2_SSH_KEY`
+---
+#### Install docker in EC2
+
+1. Install Docker (daemon + CLI)
+    
+    1.1 Install docker  
+      ```
+      sudo dnf install -y docker
+      ```
+
+    1.2 Enable system control for docker
+      ```
+      sudo systemctl enable --now docker
+      ```
+
+    1.3 Check docker version to ensure it is installed in your EC2.
+      ```
+      docker --version
+      ```
+
+    1.4 Make sure the docker service is running.
+      ```
+      sudo systemctl status docker
+      ```
+    --- 
+2. Install Docker Compose CLI (docker-compose)
+
+    2.1 Install docker compose
+      ```
+      sudo curl -L "https://github.com/docker/compose/releases/download/v2.29.1/docker-compose-$(uname -s)-$(uname -m)" \ -o /usr/local/bin/docker-compose
+      ```
+    
+    2.2 Grant access
+      ```
+      sudo chmod +x /usr/local/bin/docker-compose
+      ```
+    
+    2.3 Check if docker-compose installed correctly
+      ```
+      docker-compose version
+      ```
+    ---
+3. Grant permission to Docker
+
+    3.1 Give access
+      ```
+      sudo usermod -a -G docker ec2-user
+      ```
+    
+    3.2 Refresh your docker session
+      ```
+      newgrp docker
+      ```
+    
+    3.3 Check if you able to list docker container, if yes, then setup is completed.
+      ```
+      docker ps
+      ```
+---
+#### Create folder directory 
+> /var/www/HTLAI/order-system
+
+> sudo mkdir -p /var/www/HTLAI/order-system
+
+Grant access
+> sudo chown -R ec2-user:ec2-user /var/www/HTLAI/order-system
+---
+#### Put necessary file to the directory
+1. Grant access to your current user if you're using winscp.
+> sudo chmod -R 777 /var/www/HTLAI/order-system/redis-sentinel
+
+2. Proceed upload file
+- In `/var/www/HTLAI/order-system`, put file `docker-compose.yml`.
+- In `/var/www/HTLAI/order-system/redis-sentinel`, put file `sentinel.conf`.
+- In `/var/www/HTLAI/order-system/redis-sentinel/s1`, put file `sentinel.conf`.
+- In `/var/www/HTLAI/order-system/redis-sentinel/s2`, put file `sentinel.conf`.
+- In `/var/www/HTLAI/order-system/redis-sentinel/s3`, put file `sentinel.conf`.
+---
+#### Can proceed start project with `docker-compose up -d` or trigger the workflow in github. 

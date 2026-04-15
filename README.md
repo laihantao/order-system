@@ -75,6 +75,29 @@ The environment is orchestrated via docker-compose.yml:
 - Load: 500 concurrent threads.
 - Result: Redis locks successfully intercept duplicate requests. Database pressure is significantly reduced, and the system maintains a 100% idempotency rate.Failover Test: Manually stopping the Redis Master container results in an automatic failover; the system resumes order processing within seconds.
 
+## 🗺️ Future Roadmap
+This project has achieved its primary goal of demonstrating a high-availability order system. To evolve this into a production-grade enterprise solution, the following enhancements are planned:
+
+### 🏗️ Infrastructure & Automation
+| Feature | Objective | Impact |
+| ------ | ------ | ------|
+| Terraform (IaC) | Infrastructure as Code | Eliminate manual AWS Console configurations. Achieve "one-command" environment provisioning to ensure parity between Dev, Staging, and Prod. Also ensure the consistency between server.| 
+| Blue-Green Deployment | Zero-Downtime Updates | Implement a pipeline that spins up a new environment (Green) alongside the old one (Blue), switching traffic only after health checks pass to ensure 100% availability. |
+| Prometheus & Grafana | Observability | Real-time monitoring of system metrics (CPU, RAM, JVM heap) and Redis Sentinel health status with visual dashboards.|
+
+### 🛡️ System Resilience & Monitoring
+| Feature | Objective | Impact |
+| ------ | ------ | ------ |
+| Sentinel Webhooks | Real-time Incident Alerts | Integrate Redis Sentinel events with Telegram/Slack. Automatically notify the engineering team immediately when a master-slave failover occurs.|
+| Chaos Engineering | Fault Tolerance Testing | Implement tools like Chaos Monkey to randomly terminate Redis nodes or DB instances in a staging environment to verify the system's self-healing capabilities. |
+
+### 💻 Application & Business Logic
+To further develop the ordering system to make it more robust (Full cycle of ordering system)
+
+| Feature | Objective | Impact |
+| ------ | ------ | ------ |
+| Multi-Tenancy | Business Scalability | Update the database schema and application logic to support multiple vendors/restaurants within the same infrastructure. |
+| Advanced Rate Limiting | System Protection | Implement Redis-based sidecar rate limiting (Token Bucket) to protect the backend from burst traffic and potential DDoS attacks. |
 
 ## 🚀 How to Run 
 

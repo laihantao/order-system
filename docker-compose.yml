@@ -4,6 +4,7 @@ networks:
 
 services:
   app:
+    image: ghcr.io/laihantao/order-system:latest
     build: .
     container_name: java-order-system
     ports:

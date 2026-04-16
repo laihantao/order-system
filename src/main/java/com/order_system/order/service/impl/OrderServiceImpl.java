@@ -54,6 +54,12 @@ public class OrderServiceImpl implements OrderServices {
         // String order_id = "ORD" + "_" + System.currentTimeMillis(); // simplified order ID generation
         String order_id = "ORD" + "_" + String.valueOf(UUID.randomUUID()); // simplified order ID generation
 
+        long threadId = Thread.currentThread().getId();
+        String threadName = Thread.currentThread().getName();
+
+        System.out.println("Thread ID: " + threadId);
+        System.out.println("Thread Name: " + threadName);
+
         try {
             LOGGER.debug("Creating order for user: {}", request.userId);
 
@@ -112,7 +118,15 @@ public class OrderServiceImpl implements OrderServices {
     @Override
     public Map<String, Object> createOrderRedis(CreateOrderRequestDTO request) {
 
+        System.out.println("Testing createOrderRedis for user: " + request.userId);
+
         Map<String, Object> logging = new HashMap<>();
+
+        long threadId = Thread.currentThread().getId();
+        String threadName = Thread.currentThread().getName();
+
+        System.out.println("Thread ID: " + threadId);
+        System.out.println("Thread Name: " + threadName);
 
         String order_id = "ORD" + "_" + String.valueOf(UUID.randomUUID()); // simplified order ID generation
 
@@ -124,7 +138,7 @@ public class OrderServiceImpl implements OrderServices {
             return Map.of(
                 "status", 200,
                 "data", cacheData,
-                "message", "Order already created"
+                "message", "Order already created 123"
             );
         }
 

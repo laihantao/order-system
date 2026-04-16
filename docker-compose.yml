@@ -4,7 +4,7 @@ networks:
 
 services:
   app:
-    image: ghcr.io/laihantao/order-system:latest
+    image: ghcr.io/laihantao/order-system:latest # Remove image in local, use build instead for local testing, and use image for production deployment
     build: .
     container_name: java-order-system
     ports:
@@ -23,7 +23,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - redis-net
 

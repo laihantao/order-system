@@ -6,4 +6,11 @@
 - Food module `Pending`
 - Payment module `Pending`
 
-##
+## Infra
+- Prometheus
+- Grafana
+
+- Terraform
+- Ansible
+
+- K8s

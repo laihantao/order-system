@@ -34,7 +34,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "docker-compose.yml,redis-sentinel/" # Sync compose and the whole sentinel folder
+          source: "docker-compose.yml,redis-sentinel/,prometheus.yml" # Sync compose and the whole sentinel folder
           target: "/var/www/HTLAI/order-system"
 
       - name: Deploy to EC2

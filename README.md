@@ -354,3 +354,45 @@ Grant access
 - In `/var/www/HTLAI/order-system/redis-sentinel/s3`, put file `sentinel.conf`.
 ---
 #### Can proceed start project with `docker-compose up -d` or trigger the workflow in github. 
+
+
+# Project Planning & Tracker:
+
+| ✅ Completed/ Implemented | ⏳ In Planning | 🚧 In Development | 
+
+## Phrase 1:
+- ✅Docker
+  - ✅Java
+  - ✅Redis
+    - ✅Redis Sentinel
+  - ⏳Kafka
+  - ⏳Prometheus
+  - ⏳Grafana
+
+**Java**
+- ⏳Order module 
+- ⏳Food module 
+- ⏳Order details module 
+- ⏳Payment module 
+
+**Redis**
+- ✅Idempotency
+  - 1st layer: LOCKED KEY (user_id + idempotency_key), LOCKED VALUE (user_id + Java threadId)
+  - 2nd layer: Database constraint (user_id, idempotency_key)
+- ✅Cached data
+
+**Redis Sentinel**
+- ✅3 Quorum
+- ✅Resilence failover
+
+**Prometheus**
+- ⏳Get data source from server
+- ⏳Get data source from database
+
+**Grafana**
+- ⏳Monitoring on server based on Prometheus
+- ⏳Monitoring on database based on Prometheus
+
+**Kafka**
+- ⏳Shock absorb
+- ⏳Decouple service

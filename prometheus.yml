@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "java-order-system"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["app:8080"] # In docker container level, point to app:8080. # becaue if localhost:8080 here means within prometheus container, so it is different.

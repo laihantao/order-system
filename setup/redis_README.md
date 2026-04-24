@@ -237,6 +237,9 @@ docker-compose down sentinel-1 sentinel-2 sentinel-3 redis-master redis-replica-
 
 docker-compose up -d redis-master redis-replica-1 redis-replica-2 sentinel-1 sentinel-2 sentinel-3
 
+### Build docker image
+docker compose up --build -d
 
+docker compose build --no-cache
 
 sudo chmod -R 777 /var/www/HTLAI/order-system

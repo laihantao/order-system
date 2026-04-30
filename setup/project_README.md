@@ -53,3 +53,42 @@
 ### Clean package without test
 ./mvnw clean package -DskipTests
 
+
+
+# Monitoring
+
+## Prometheus
+1. Create prometheus.yml
+```
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "java-order-system"
+    metrics_path: "/actuator/prometheus"
+    static_configs:
+      - targets: ["app:8080"] # In docker container level, point to app:8080. # becaue if localhost:8080 here means within prometheus container, so it is different.
+```
+2. application.properties
+```
+management.endpoints.web.exposure.include=*
+management.endpoint.prometheus.enabled=true
+management.endpoints.web.base-path=/actuator
+```
+3. pom.xml
+```
+<dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-registry-prometheus</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+
+4. Access to localhost:9090
+5. Create datasource
+
+## Grafana
